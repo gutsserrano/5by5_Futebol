@@ -1,3 +1,6 @@
+USE DBFutebol;
+GO
+
 CREATE TABLE Estatistica
 (
     nome_camp varchar(20) not null,

@@ -6,6 +6,6 @@ BEGIN
     SELECT nome_equipe AS Equipe, gols_marcados AS Gols_marcados, gols_sofridos AS Gols_sofridos, pontuacao AS Pontuacao
     FROM Estatistica
     WHERE nome_camp = @Campeonato AND temporada = @Temporada
-    ORDER BY pontuacao DESC
+    ORDER BY pontuacao DESC, (gols_marcados - gols_sofridos) DESC
 END
 GO
