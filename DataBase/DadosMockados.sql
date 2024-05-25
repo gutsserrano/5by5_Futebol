@@ -85,3 +85,6 @@ SELECT * FROM Jogo WHERE campeonato = 'Libertadores' ORDER BY campeonato, mandan
 EXEC Encerrar_Campeonato 'Libertadores', '2024'
 SELECT * FROM Campeonato
 EXEC Ver_campeao 'Libertadores', '2024'
+
+EXEC Ver_tabela 'Champions League', '2024'
+SELECT * FROM Jogo WHERE campeonato = 'Champions League' ORDER BY campeonato, mandante, visitante ;

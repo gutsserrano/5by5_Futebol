@@ -8,7 +8,7 @@ namespace FutebolApp
 {
     internal class Banco
     {
-        readonly string Conexao = "Data Source=localhost; Initial Catalog=DBFutebol; User Id=sa; Password=SqlServer2019!; TrustServerCertificate=Yes";
+        readonly string Conexao = "Data Source=127.0.0.1; Initial Catalog=DBFutebol; User Id=sa; Password=SqlServer2019!; TrustServerCertificate=Yes";
 
         public Banco()
         {
@@ -20,4 +20,4 @@ namespace FutebolApp
         }
     }
 }
-}
+
