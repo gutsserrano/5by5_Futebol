@@ -7,10 +7,33 @@ namespace FutebolApp
     {
         static void Main(string[] args)
         {
-            InserirJogo();
+            int option;
+            do
+            {
+                option = Menu();
+
+                switch (option)
+                {
+                    case 1:
+                        CadastrarEquipe();
+                        break;
+                    case 2:
+                        VerEquipesCadastradas();
+                        break;
+                    case 3:
+                        CadastrarCampeonato();
+                        break;
+                    case 4:
+                        VerCampeonatos();
+                        break;
+                    case 5:
+                        MenuCampeonatos();
+                        break;
+                }
+            } while(option != 0);
         }
 
-        static void InserirEquipe()
+        static void CadastrarEquipe()
         {
             Banco conn = new Banco();
             SqlConnection conexaosql = new SqlConnection(conn.Caminho());
@@ -41,7 +64,58 @@ namespace FutebolApp
             }
         }
 
-        static void InserirCampeonato()
+        static void VerEquipesCadastradas()
+        {
+            Banco conn = new Banco();
+            SqlConnection conexaosql = new SqlConnection(conn.Caminho());
+            conexaosql.Open();
+            SqlCommand cmd = new SqlCommand();
+
+
+            try
+            {
+                cmd.CommandText = "SELECT nome, apelido, data_criacao FROM Equipe ORDER BY nome";
+
+                cmd.Connection = conexaosql;
+                var returnValue = cmd.ExecuteReader();
+
+                if (!returnValue.HasRows)
+                {
+                    Console.WriteLine("Nenhum Time cadastrado");
+                    Console.ReadKey();
+                    //throw new Exception("Não há registros"); //Poderia retornar uma Exception
+                }
+                else
+                {
+                    Titulo($">>>>>Times Cadastrados<<<<<");
+                    Console.WriteLine($"             Nome             |     apelido   |   Data de Criação");
+                    Console.WriteLine($"                              |               |");
+                    int posicao = 1;
+                    while (returnValue.Read())
+                    {
+                        string nome = returnValue["nome"].ToString();
+                        string apelido = returnValue["apelido"].ToString();
+                        DateTime data = DateTime.Parse(returnValue["data_criacao"].ToString());
+
+                        Console.WriteLine($"{nome.PadRight(30)}| {apelido.PadRight(14)}| {data.ToString().PadRight(10)}");
+                        posicao++;
+                    }
+                    Console.ReadKey();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nMensagem da Exception:");
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conexaosql.Close();
+            }
+        }
+
+        static void CadastrarCampeonato()
         {
             Banco conn = new Banco();
             SqlConnection conexaosql = new SqlConnection(conn.Caminho());
@@ -58,6 +132,57 @@ namespace FutebolApp
 
                 Console.WriteLine("Campeonato Inserido!");
                 Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nMensagem da Exception:");
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conexaosql.Close();
+            }
+        }
+
+        static void VerCampeonatos()
+        {
+            Banco conn = new Banco();
+            SqlConnection conexaosql = new SqlConnection(conn.Caminho());
+            conexaosql.Open();
+            SqlCommand cmd = new SqlCommand();
+
+
+            try
+            {
+                cmd.CommandText = "SELECT nome_camp, temporada, status_camp FROM Campeonato ORDER BY nome_camp, temporada, status_camp";
+
+                cmd.Connection = conexaosql;
+                var returnValue = cmd.ExecuteReader();
+
+                if (!returnValue.HasRows)
+                {
+                    Console.WriteLine("Nenhum Campeonato cadastrado");
+                    Console.ReadKey();
+                    //throw new Exception("Não há registros"); //Poderia retornar uma Exception
+                }
+                else
+                {
+                    Titulo($">>>>>Campeonatos Cadastrados<<<<<");
+                    Console.WriteLine($"     Campeonato     |  temporada   |  Situação");
+                    Console.WriteLine($"                    |              |");
+                    int posicao = 1;
+                    while (returnValue.Read())
+                    {
+                        string nome = returnValue["nome_camp"].ToString();
+                        string apelido = returnValue["temporada"].ToString();
+                        string situacao = returnValue["status_camp"].ToString();
+
+                        Console.WriteLine($"{nome.PadRight(20)}| {apelido.PadRight(13)}| {situacao}");
+                        posicao++;
+                    }
+                    Console.ReadKey();
+                }
             }
             catch (Exception e)
             {
@@ -101,17 +226,14 @@ namespace FutebolApp
                 gols_visitante = LerInt("Quantos gols o time visitante fez? ");
                 cmd.Parameters.Add(new SqlParameter("@gols_visitante", SqlDbType.Int)).Value = gols_visitante;
 
-                SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
-                returnParameter.Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add("@status_insersao", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                 cmd.ExecuteNonQuery();
 
-                int returnValue = Convert.ToInt32(returnParameter.Value);
+                int returnValue = Convert.ToInt32(cmd.Parameters["@status_insersao"].Value);
 
-                if (returnValue == 1)
+                if (returnValue == 0)
                 {
-                    Console.WriteLine("Campeonato Inserido!");
-
                     Titulo(">>>>>Placar Final<<<<<");
                     Console.WriteLine($"{mandante} {gols_mandante} X {gols_visitante} {visitante}");
                     Console.WriteLine();
@@ -128,9 +250,21 @@ namespace FutebolApp
                         Console.WriteLine("Empate, ambos os times anotaram 1 ponto!");
                     }
                 }
+                else if (returnValue == 1)
+                {
+                    Console.WriteLine("Não foi possivel inserir este jogo. O campeonato já foi encerrado ou não está cadastrado.");
+                }
+                else if(returnValue == 2) 
+                {
+                    Console.WriteLine("Não foi possivel inserir este jogo. O(s) time(s) não existe(em).");
+                }
+                else if (returnValue == 3)
+                {
+                    Console.WriteLine("Não foi possivel inserir este jogo. Os times devem ser diferentes.");
+                }
                 else
                 {
-                    Console.WriteLine("Não foi possivel inserir este jogo :( Verifique se o campeonato/temporada, e os times estâo cadastrados.");
+                    Console.WriteLine("Não foi possivel inserir este jogo. Time(s) não cadastrado(s) no campeonato.");
                 }
 
                 Console.ReadKey();
@@ -145,6 +279,84 @@ namespace FutebolApp
             {
                 conexaosql.Close();
             }
+        }
+
+        static void InserirEquipeAoCampeonato(string camp, string temp)
+        {
+            Banco conn = new Banco();
+            SqlConnection conexaosql = new SqlConnection(conn.Caminho());
+            conexaosql.Open();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("[dbo].[Cadastrar_equipe_para_campeonato]", conexaosql);
+                cmd.CommandType = CommandType.StoredProcedure;
+                Titulo(">>>>>Inserir equipe ao campeonato<<<<<");
+
+                cmd.Parameters.Add(new SqlParameter("@campeonato", SqlDbType.VarChar)).Value = camp;
+                cmd.Parameters.Add(new SqlParameter("@temporada", SqlDbType.VarChar)).Value = temp;
+                cmd.Parameters.Add(new SqlParameter("@nome", SqlDbType.VarChar)).Value = LerString("Digite o nome da equipe a ser adicionada: ");
+
+
+                cmd.Parameters.Add("@return_value", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                cmd.ExecuteNonQuery();
+
+                int returnValue = Convert.ToInt32(cmd.Parameters["@return_value"].Value);
+
+                if (returnValue == 0)
+                {
+                    Titulo("**Equipe Inserida com sucesso!**");
+                }
+                else if (returnValue == 1)
+                {
+                    Console.WriteLine("\nNão foi possivel adicionar este time. Time não cadastrado");
+                }
+                else if (returnValue == 2)
+                {
+                    Console.WriteLine("\nNão foi possivel adicionar este time. Campeonato não cadastrado");
+                }
+                else if (returnValue == 3)
+                {
+                    Console.WriteLine("\nNão foi possivel adicionar este time. Campeonato encerrado");
+                }
+                else if (returnValue == 4)
+                {
+                    Console.WriteLine("\nNão foi possivel adicionar este time. Campeonato cheio");
+                }
+                else
+                {
+                    Console.WriteLine("\nNão foi possivel adicionar este time. Time já cadastrado no campeonato");
+                }
+
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nMensagem da Exception:");
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conexaosql.Close();
+            }
+        }
+
+        static void MenuInsertEquipe()
+        {
+            string camp, temp;
+
+            Titulo(">>>>>Inserir equipe ao campeonato<<<<<");
+            camp = LerString("Digite o nome do campeonato: ");
+            temp = LerString("Digite a temporada: ");
+
+            Console.Clear();
+            do
+            {
+                InserirEquipeAoCampeonato(camp, temp);
+                Console.Clear();
+            } while (LerString("Deseja adicionar mais um Time ?\n 1 - SIM\n0 - NÃO") == "1");
         }
 
         static void VerTabela()
@@ -200,6 +412,118 @@ namespace FutebolApp
             {
                 conexaosql.Close();
             }
+        }
+
+        static void EncerrarCampeonato()
+        {
+            Banco conn = new Banco();
+            SqlConnection conexaosql = new SqlConnection(conn.Caminho());
+            conexaosql.Open();
+
+            string mandante, visitante;
+            int gols_mandante, gols_visitante;
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("[dbo].[Encerrar_campeonato]", conexaosql);
+                cmd.CommandType = CommandType.StoredProcedure;
+                Titulo(">>>>>Encerrar Campeonato<<<<<");
+
+                cmd.Parameters.Add(new SqlParameter("@nome", SqlDbType.VarChar)).Value = LerString("Digite o nome do Campeonato: ");
+                cmd.Parameters.Add(new SqlParameter("@temporada", SqlDbType.VarChar)).Value = LerString("Digite a temporada: ");
+
+                cmd.Parameters.Add("@return_value", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                cmd.ExecuteNonQuery();
+
+                int returnValue = Convert.ToInt32(cmd.Parameters["@return_value"].Value);
+
+                if (returnValue == 1)
+                {
+                    Console.WriteLine("\nCampeonato encerrado com sucesso!");
+                }
+                else
+                {
+                    Console.WriteLine("\nNão foi possível encerrar este campeonato pois nem todos os times jogaram seus jogos de IDA e VOLTA.");
+                }
+
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nMensagem da Exception:");
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conexaosql.Close();
+            }
+        }
+
+        static void VerCampeao()
+        {
+            //TODO
+        }
+
+        static int Menu()
+        {
+            int option;
+
+            do
+            {
+                Titulo(">>>>>Campeonato de Futebol<<<<<");
+                option = LerInt(
+                    "1 - Cadastrar Time\n" +
+                    "2 - Ver times cadastrados\n" +
+                    "3 - Cadastrar Campeonato\n" +
+                    "4 - Ver Campeonatos cadastrados\n" +
+                    "5 - Manipular Campeonatos\n" +
+                    "0 - Sair"
+                    );
+            } while (option < 0 || option > 5);
+
+            return option;
+        }
+
+        static void MenuCampeonatos()
+        {
+            int option;
+
+            do
+            {
+                do
+                {
+                    Titulo(">>>>>Área Campeonatos<<<<<");
+                    option = LerInt(
+                        "1 - Adicionar Times a um Campeonato\n" +
+                        "2 - Inserir jogo a um Campeonato\n" +
+                        "3 - Ver Tabela de um Campeonato\n" +
+                        "4 - Encerrar um Campeonato\n" +
+                        "5 - Ver Campeão de um Campeonato\n" +
+                        "0 - Voltar"
+                        );
+                } while (option < 0 || option > 5);
+
+                switch (option)
+                {
+                    case 1:
+                        MenuInsertEquipe();
+                        break;
+                    case 2:
+                        InserirJogo();
+                        break;
+                    case 3:
+                        VerTabela();
+                        break;
+                    case 4:
+                        EncerrarCampeonato();
+                        break;
+                    case 5:
+                        //VerCampeao();
+                        break;
+                }
+            } while (option != 0);
         }
 
         static string LerString(string msg)
@@ -264,6 +588,7 @@ namespace FutebolApp
         {
             Console.Clear();
             Console.WriteLine(msg);
+            Console.WriteLine();
         }
     }
 }
