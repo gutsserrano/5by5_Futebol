@@ -463,7 +463,49 @@ namespace FutebolApp
 
         static void VerCampeao()
         {
-            //TODO
+            Banco conn = new Banco();
+            SqlConnection conexaosql = new SqlConnection(conn.Caminho());
+            conexaosql.Open();
+            string camp;
+            string temporada;
+            try
+            {
+                SqlCommand cmd = new SqlCommand("[dbo].[Ver_campeao]", conexaosql);
+                cmd.CommandType = CommandType.StoredProcedure;
+                Titulo(">>>>>Ver Campeão<<<<<");
+                camp = LerString("Digite o nome do Campeonato: ");
+                temporada = LerString("Digite a temporada: ");
+                cmd.Parameters.Add(new SqlParameter("@campeonato", SqlDbType.VarChar)).Value = camp;
+                cmd.Parameters.Add(new SqlParameter("@temporada", SqlDbType.VarChar)).Value = temporada;
+
+                var returnValue = cmd.ExecuteReader();
+
+                if (!returnValue.HasRows)
+                {
+                    Console.WriteLine("Campeonato não encerrado");
+                }
+                else
+                {
+                    returnValue.Read();
+                    Console.WriteLine();
+                    Console.WriteLine($"Time Campeão: {returnValue["nome_equipe"]}\nGols Marcados: {returnValue["gols_marcados"]}\nGols Sofridos: {returnValue["gols_sofridos"]}\nPontuação: {returnValue["pontuacao"]}");
+
+                }
+
+            
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\nMensagem da Exception:");
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+            }
+            finally
+            {
+                conexaosql.Close();
+            }
+            
+            Console.ReadKey();
         }
 
         static int Menu()
@@ -520,7 +562,7 @@ namespace FutebolApp
                         EncerrarCampeonato();
                         break;
                     case 5:
-                        //VerCampeao();
+                        VerCampeao();
                         break;
                 }
             } while (option != 0);
