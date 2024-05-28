@@ -25,41 +25,41 @@ EXEC Inserir_Campeonato 'Copa do Brasil', '2020'
 EXEC Inserir_Campeonato 'Libertadores', '2024'
 EXEC Inserir_Campeonato 'Champions League', '2024'
 
-EXEC Inserir_jogo 'Champions League', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2;
+EXEC Inserir_jogo 'Champions League', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2, 0;
 DELETE FROM Jogo WHERE campeonato = 'Champions League' AND temp = '2024';
 DELETE FROM Estatistica WHERE nome_camp = 'Champions League' AND temporada = '2024';
 
-EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Clube de Regatas do Flamengo', 1, 3;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 5, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Clube de Regatas do Flamengo', 1, 3, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 5, 0, 0;
 
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'Sport Club Corinthians', 1, 1;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'São Paulo Futebol Clube', 2, 2;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'Clube de Regatas do Flamengo', 2, 1;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'Sport Club Corinthians', 1, 1, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'São Paulo Futebol Clube', 2, 2, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sociedade Esportiva Palmeiras', 'Clube de Regatas do Flamengo', 2, 1, 0;
 
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'São Paulo Futebol Clube', 0, 0;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'Sociedade Esportiva Palmeiras', 0, 0;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'Clube de Regatas do Flamengo', 1, 2;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'São Paulo Futebol Clube', 0, 0, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'Sociedade Esportiva Palmeiras', 0, 0, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Sport Club Corinthians', 'Clube de Regatas do Flamengo', 1, 2, 0;
 
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'São Paulo Futebol Clube', 2, 1;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'Sport Club Corinthians', 2, 0;
-EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'Sociedade Esportiva Palmeiras', 1, 1;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'São Paulo Futebol Clube', 2, 1, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'Sport Club Corinthians', 2, 0, 0;
+EXEC Inserir_jogo 'Brasileirao', '2024', 'Clube de Regatas do Flamengo', 'Sociedade Esportiva Palmeiras', 1, 1, 0;
 
 
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2;
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sociedade Esportiva Palmeiras', 'Sport Club Corinthians', 1, 1;
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 3, 2;
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sociedade Esportiva Palmeiras', 'São Paulo Futebol Clube', 0, 0;
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sport Club Corinthians', 'São Paulo Futebol Clube', 0, 1;
-EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sport Club Corinthians', 'Sociedade Esportiva Palmeiras', 3, 3;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2, 0;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sociedade Esportiva Palmeiras', 'Sport Club Corinthians', 1, 1, 0;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 3, 2, 0;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sociedade Esportiva Palmeiras', 'São Paulo Futebol Clube', 0, 0, 0;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sport Club Corinthians', 'São Paulo Futebol Clube', 0, 1, 0;
+EXEC Inserir_jogo 'Copa do Brasil', '2020', 'Sport Club Corinthians', 'Sociedade Esportiva Palmeiras', 3, 3, 0;
 
-EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2;
-EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Clube de Regatas do Flamengo', 1, 3;
-EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 5, 0;
-EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube','Santos Futebol Clube', 1, 1;
-EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Grêmio Foot-Ball Porto Alegrense', 1, 1;
+EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Sport Club Corinthians', 3, 2, 0;
+EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Clube de Regatas do Flamengo', 1, 3, 0;
+EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Sociedade Esportiva Palmeiras', 5, 0, 0;
+EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube','Santos Futebol Clube', 1, 1, 0;
+EXEC Inserir_jogo 'Libertadores', '2024', 'São Paulo Futebol Clube', 'Grêmio Foot-Ball Porto Alegrense', 1, 1, 0;
 
-EXEC Inserir_jogo 'Libertadores', '2024', 'Esporte Clube Noroeste', 'Sport Club Corinthians', 1, 1;
+EXEC Inserir_jogo 'Libertadores', '2024', 'Esporte Clube Noroeste', 'Sport Club Corinthians', 1, 1, 0;
 
 
 EXEC Contabilizar_gols 'São Paulo Futebol Clube', 'Brasileirao', '2024'
@@ -88,3 +88,13 @@ EXEC Ver_campeao 'Libertadores', '2024'
 
 EXEC Ver_tabela 'Champions League', '2024'
 SELECT * FROM Jogo WHERE campeonato = 'Champions League' ORDER BY campeonato, mandante, visitante ;
+SELECT * FROM Estatistica WHERE nome_camp = 'Champions League' AND temporada = '2024'
+
+SELECT * FROM Equipe ORDER BY nome
+
+SELECT * FROM Campeonato ORDER BY nome_camp, temporada, status_camp
+
+DELETE FROM Jogo WHERE visitante = 'Sociedade Esportiva Palmeiras'
+DELETE FROM Estatistica WHERE nome_equipe = 'Sociedade Esportiva Palmeiras' AND nome_camp = 'Champions League' AND temporada = '2024'
+
+UPDATE Campeonato SET status_camp = 'EM ANDAMENTO' WHERE nome_camp = 'Brasileirao';

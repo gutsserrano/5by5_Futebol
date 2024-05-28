@@ -7,7 +7,15 @@ CREATE OR ALTER PROC Inserir_jogo
     @Mandante varchar(30),
     @Visitante varchar(30),
     @gols_mandante int,
-    @gols_visitante int
+    @gols_visitante int,
+    @status_insersao int OUTPUT
+
+    -- Retorno 0 = Insersao realizada com sucesso
+    -- Retorno 1 = Insersao nao realizada, campeonato esta encerrado ou não está cadastrado
+    -- Retorno 2 = Insersao nao realizada, times nao existem
+    -- Retorno 3 = Insersao nao realizada, times iguais
+    -- Retorno 4 = Insersao nao realizada, time(s) nao cadastrado(s) no campeonato
+    
 AS
 BEGIN
 
@@ -18,71 +26,68 @@ BEGIN
         -- Verifica se ambos os times existem
         IF EXISTS(SELECT nome FROM dbo.Equipe WHERE nome = @Mandante) AND EXISTS(SELECT nome FROM dbo.Equipe WHERE nome = @Visitante)
         BEGIN
-            DECLARE
-                @Times_count int;
 
-            SET @Times_count = (SELECT COUNT(*) FROM dbo.Estatistica WHERE nome_camp = @Campeonato AND temporada = @Temporada);
-            
-            IF(@Times_count < 5)
+            IF (SELECT nome FROM dbo.Equipe WHERE nome = @Mandante) != @Visitante 
             BEGIN
-                IF(SELECT status_camp FROM dbo.Campeonato WHERE nome_camp = @Campeonato AND temporada = @Temporada) = 'NAO INICIADO'
+                
+                IF EXISTS(SELECT nome_camp, temporada, nome_equipe FROM dbo.Estatistica WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante) AND EXISTS(SELECT nome_camp, temporada, nome_equipe FROM dbo.Estatistica WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante)
                 BEGIN
-                    UPDATE dbo.Campeonato
-                    SET status_camp = 'EM ANDAMENTO'
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada
-                END
+                    IF(SELECT status_camp FROM dbo.Campeonato WHERE nome_camp = @Campeonato AND temporada = @Temporada) = 'NAO INICIADO'
+                    BEGIN
+                        UPDATE dbo.Campeonato
+                        SET status_camp = 'EM ANDAMENTO'
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada
+                    END
 
-                INSERT INTO dbo.Jogo(campeonato, temp, mandante, visitante, gols_mandante, gols_visitante)
-                values (@Campeonato, @Temporada, @Mandante, @Visitante, @gols_mandante, @gols_visitante)
+                    INSERT INTO dbo.Jogo(campeonato, temp, mandante, visitante, gols_mandante, gols_visitante)
+                    values (@Campeonato, @Temporada, @Mandante, @Visitante, @gols_mandante, @gols_visitante)
 
-                IF NOT EXISTS (SELECT nome_camp, temporada, nome_equipe FROM dbo.Estatistica WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante)
-                BEGIN
-                    INSERT INTO dbo.Estatistica(nome_camp, temporada, nome_equipe, gols_marcados, gols_sofridos, pontuacao)
-                    VALUES (@Campeonato, @Temporada, @Mandante, 0, 0, 0)
-                END
+                    IF @gols_mandante > @gols_visitante
+                    BEGIN
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante, pontuacao = pontuacao + 3
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
 
-                IF NOT EXISTS (SELECT nome_camp, temporada, nome_equipe FROM dbo.Estatistica WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante)
-                BEGIN
-                    INSERT INTO dbo.Estatistica(nome_camp, temporada, nome_equipe, gols_marcados, gols_sofridos, pontuacao)
-                    VALUES (@Campeonato, @Temporada, @Visitante, 0, 0, 0)
-                END
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
+                    END
+                    ELSE IF @gols_mandante < @gols_visitante
+                    BEGIN
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
 
-                IF @gols_mandante > @gols_visitante
-                BEGIN
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante, pontuacao = pontuacao + 3
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante, pontuacao = pontuacao + 5
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
+                    END
+                    ELSE
+                    BEGIN
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante, pontuacao = pontuacao + 1
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
 
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
-                END
-                ELSE IF @gols_mandante < @gols_visitante
-                BEGIN
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
+                        UPDATE dbo.Estatistica
+                        SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante, pontuacao = pontuacao + 1
+                        WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
+                    END
 
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante, pontuacao = pontuacao + 5
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
+                    SET @status_insersao = 0;
                 END
                 ELSE
-                BEGIN
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_mandante, gols_sofridos = gols_sofridos + @gols_visitante, pontuacao = pontuacao + 1
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Mandante
-
-                    UPDATE dbo.Estatistica
-                    SET gols_marcados = gols_marcados + @gols_visitante, gols_sofridos = gols_sofridos + @gols_mandante, pontuacao = pontuacao + 1
-                    WHERE nome_camp = @Campeonato AND temporada = @Temporada AND nome_equipe = @Visitante
-                END
-
-                RETURN 1;
+                    SET @status_insersao = 4;
             END
+            ELSE
+                SET @status_insersao = 3;
         END
+        ELSE
+            SET @status_insersao = 2;
     END
+    ELSE
+        SET @status_insersao = 1;
 
-    RETURN 0;
+    
+    RETURN;
 END
 GO

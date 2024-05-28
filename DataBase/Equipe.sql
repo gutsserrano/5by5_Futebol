@@ -1,3 +1,6 @@
+USE DBFutebol;
+GO
+
 CREATE TABLE Equipe
 (
     nome varchar(30) not null,

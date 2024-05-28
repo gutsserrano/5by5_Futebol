@@ -10,12 +10,12 @@ GO
 
 CREATE OR ALTER PROC Encerrar_Campeonato
     @nome varchar(20),
-    @temporada varchar(10)
+    @temporada varchar(10),
+    @return_value int OUTPUT
 AS
 BEGIN
 
     DECLARE
-        @Resultado varchar(5),
         @jogos_count int,
         @Times_count int;
 
@@ -29,15 +29,15 @@ BEGIN
             UPDATE dbo.Campeonato
             SET status_camp = 'ENCERRADO'
             WHERE nome_camp = @nome AND temporada = @temporada
-            SET @Resultado = 1;
+            SET @return_value = 1;
         END
         ELSE
-            SET @Resultado = 0;
+            SET @return_value = 0;
     END
     ELSE
-        SET @Resultado = 0;
+        SET @return_value = 0;
 
-    RETURN @Resultado;
+    RETURN @return_value;
 END
 GO
 
@@ -48,12 +48,10 @@ AS
 BEGIN
     IF(SELECT status_camp FROM dbo.Campeonato WHERE nome_camp = @Campeonato AND temporada = @Temporada) = 'ENCERRADO'
     BEGIN
-        SELECT TOP 1 nome_equipe AS Campeao, pontuacao AS Pontuacao
-        FROM Estatistica
+        SELECT nome_equipe, gols_marcados, gols_sofridos, pontuacao
+        FROM dbo.Estatistica
         WHERE nome_camp = @Campeonato AND temporada = @Temporada
-        ORDER BY pontuacao DESC, (gols_marcados - gols_sofridos) DESC
+        ORDER BY pontuacao DESC
     END
-    ELSE
-        RETURN 0;
 END
 GO
